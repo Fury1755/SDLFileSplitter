@@ -26,6 +26,10 @@ dependencies = [
 module = "tesserocr"
 reportMissingTypeStubs = false
 
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
 [tool.ruff.lint]
 fixable = ["ALL"]
 
