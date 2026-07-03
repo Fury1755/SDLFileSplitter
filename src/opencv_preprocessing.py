@@ -4,6 +4,7 @@ This module handles preprocessing of pdf pages for OCR.
 
 import cv2
 import numpy as np
+from deskew import determine_skew
 
 
 def preprocess(img: np.ndarray) -> np.ndarray:
@@ -15,8 +16,10 @@ def preprocess(img: np.ndarray) -> np.ndarray:
     """
 
     # pylint: disable=E1101
-    grayscale = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    denoised = cv2.bilateralFilter(grayscale, 9, 75, 75)
+
+    # we skip greyscale because pymupdf already loads the pixmap as
+    #  grayscale
+    denoised = cv2.bilateralFilter(img, 9, 75, 75)
 
     # THRESH_BINARY turns every pixel below the threshold white, and every
     #  pixel above the threshold black.
