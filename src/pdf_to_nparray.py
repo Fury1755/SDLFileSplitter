@@ -18,5 +18,5 @@ def page_to_numpy(page: pymupdf.Page, dpi: int = 300) -> np.ndarray:
     """
 
     pix = page.get_pixmap(dpi=dpi, colorspace=pymupdf.csGRAY)
-    img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width)  # pylint: disable=E0602
-    return img
+    nparray = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width)  # pylint: disable=E0602
+    return nparray

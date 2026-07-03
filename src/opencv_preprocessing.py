@@ -4,7 +4,6 @@ This module handles preprocessing of pdf pages for OCR.
 
 import cv2
 import numpy as np
-from deskew import determine_skew
 
 
 def preprocess(img: np.ndarray) -> np.ndarray:
