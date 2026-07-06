@@ -7,5 +7,5 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PDF_PATH = os.environ.get("PDF_PATH")
-TESS_DATA_PATH = os.environ.get("TESS_DATA_PATH")
+PDF_PATH = os.environ["PDF_PATH"]
+TESS_DATA_PATH = os.environ["TESS_DATA_PATH"]
