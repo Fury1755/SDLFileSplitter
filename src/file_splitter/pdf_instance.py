@@ -7,6 +7,7 @@ import os
 import re
 
 from pymupdf import Document, Page
+from tqdm import tqdm
 
 from src.ocr_engine.base import OCREngine
 from src.file_splitter.text_parser import rules_engine
@@ -57,8 +58,12 @@ class PDFInstance:
         self._current_name = None
 
     def split_statements(self, doc: Document):
-        for page_number, page_text in self._ocr_engine.process_doc(doc):
-            metadata = rules_engine.get_metadata(page_text)
+        for page_number, page_text in tqdm(
+            enumerate(self._ocr_engine.process_doc(doc)),
+            total=len(doc),
+            desc="Processing pages",
+        ):
+            metadata = rules_engine.get_metadata(page_text[1])
             page = doc[page_number]
 
             if metadata.name:
