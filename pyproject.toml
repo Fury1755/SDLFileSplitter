@@ -31,5 +31,8 @@ target-version = "py312"
 [tool.ruff.lint]
 fixable = ["ALL"]
 
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
 [tool.uv.sources]
 tesserocr = { url = "https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.10.0-tesseract-5.5.2/tesserocr-2.10.0-cp313-cp313-win_amd64.whl" }

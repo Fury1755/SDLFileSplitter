@@ -1,0 +1,47 @@
+"""
+Tests text parsing rules.
+"""
+
+import pytest
+
+from src.file_splitter.text_parser import rules
+
+
+@pytest.mark.parametrize(
+    "text, expected_name",
+    [
+        ("badabadadba", None),
+        (
+            "Moonshine\nShadow Ronin Mifune Pte Ltd\nbababa",
+            "Shadow Ronin Mifune Pte Ltd",
+        ),
+        ("mcdonald Pte\n mcdonald Ltd", None),
+    ],
+)
+def test_get_name(text: str, expected_name: str | None):
+    """
+    Tests whether get_name returns the line where a line contains "Pte" and "Ltd".
+
+    We assume that line is the company name.
+    """
+
+    name = rules.get_name(text)
+
+    assert name == expected_name
+
+
+@pytest.mark.parametrize(
+    "text, is_final",
+    [
+        ("Page 2103902190 of 2", False),
+        ("page 3 of 3", False),
+        ("Page 10 of 10", True),
+        ("Page 9 of 9", True),
+    ],
+)
+def test_is_final_page(text: str, is_final: bool):
+    """
+    Tests whether is_final_page identifies "Page x of y" as the final page for x == y.
+    """
+
+    assert is_final == rules.is_final_page(text)
