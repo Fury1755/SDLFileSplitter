@@ -6,13 +6,13 @@ the required state (represented as properties of the class) is reached.
 
 import os
 import re
+from typing import Callable
 
 from pymupdf import Document, Page
 from tqdm import tqdm
 
 from src.ocr_engine.base import OCREngine
 from file_splitter.text_parser import rules_engine
-from src.file_splitter.os_utils import create_folder
 
 
 class PDFInstance:
@@ -22,10 +22,15 @@ class PDFInstance:
     It is a state machine that creates a new pdf file when the conditions are reached.
     """
 
-    def __init__(self, ocr_engine: OCREngine, runtime_parent_dir: str):
+    def __init__(
+        self,
+        ocr_engine: OCREngine,
+        runtime_parent_dir: str,
+        create_folder_path: Callable[[str], str],
+    ):
         # this is an existing instance of an initialized OCR engine
         self._ocr_engine = ocr_engine
-        self._output_folder = create_folder(runtime_parent_dir)
+        self._output_folder = create_folder_path(runtime_parent_dir)
         self._page_buffer: list[Page] = []
         self._current_name: str | None = None
 
