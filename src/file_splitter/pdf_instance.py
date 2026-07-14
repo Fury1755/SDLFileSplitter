@@ -1,6 +1,7 @@
 """
 This module holds the class statement_splitter.
-It is a sequential, incremental state machine.
+It is a sequential, incremental state machine that flushes each split pdf file whenever
+the required state (represented as properties of the class) is reached.
 """
 
 import os
@@ -17,7 +18,7 @@ from src.file_splitter.os_utils import create_folder
 class PDFInstance:
     """
     This class is a pdf instance that grows in size, then flushes itself and saves its contents
-    as a new file when the criteria is reached.
+    as a new file when the criteria (state) is reached.
     It is a state machine that creates a new pdf file when the conditions are reached.
     """
 
