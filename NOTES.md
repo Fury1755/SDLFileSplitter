@@ -9,3 +9,6 @@
 
 ### 14-07-2026
 - you can pass functions as an argument. They are of type 'Callable'
+
+### 17-07-2026
+- when mocking, unittest.mock.patch patches functions internally whereas unittest.mock.Mock lets you pass patched objects into the function instead, making the mocked dependency explicit. Always use Mock() where possible.
