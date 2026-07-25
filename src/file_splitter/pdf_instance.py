@@ -68,7 +68,7 @@ class PDFInstance:
             enumerate(self._ocr_engine.process_doc(doc)),
             total=len(doc),
             desc="Processing pages",
-            disable=disable_progress # used for unit testing
+            disable=disable_progress,  # used for unit testing
         ):
             metadata = rules_engine.get_metadata(page_text[1])
             page = doc[page_number]
