@@ -63,17 +63,20 @@ class PDFInstance:
         self._page_buffer = []
         self._current_name = None
 
-    def split_statements(self, doc: Document):
+    def split_statements(self, doc: Document, disable_progress: bool = False):
         for page_number, page_text in tqdm(
             enumerate(self._ocr_engine.process_doc(doc)),
             total=len(doc),
             desc="Processing pages",
+            disable=disable_progress # used for unit testing
         ):
             metadata = rules_engine.get_metadata(page_text[1])
             page = doc[page_number]
 
             if metadata.name:
-                if metadata.name != self._current_name:
+                if self._current_name is None:
+                    self._current_name = metadata.name
+                elif metadata.name != self._current_name:
                     self._flush()
                     self._current_name = metadata.name
 
