@@ -2,9 +2,10 @@
 This module tests the pdf_instance file to ensure its state management is behaving correctly.
 """
 
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, create_autospec, patch
+import pytest
 from file_splitter.pdf_instance import PDFInstance
-from file_splitter.text_parser.sdl_rules.rules import Metadata
+from ocr_engine.base import OCREngine
 
 
 def test_pdf_instance_init():
@@ -27,13 +28,35 @@ def test_pdf_instance_init():
     assert test_instance._current_name is None
 
 
-def test_pdf_instance_flush():
+@pytest.mark.parametrize(
+    "page_texts, flush_count",
+    [(["ACME Pte Ltd", "Shadow Ronin Mifune Pte Ltd", "asdohjasfuodfh"], 2)],
+)
+def test_pdf_instance_split_statements(page_texts, flush_count):
     """
-    Tests if the ._flush logic works as intended (i.e. flushing when all the
-    state requirements are met)
+    Tests the behaviour of split_statements through external input and output.
+    This test verifies that split_statements calls ._flush the correct number of times
+    ('flush_count') corresponding to the input ('page_texts').
     """
 
-    mock_ocr = Mock()
-    mock_ocr.process_page.return_value = "ACME Pte Ltd"
-    mock_rules_engine = Mock()
-    mock_rules_engine.get_metadata.return_value = Metadata("ACME Pte Ltd", True)
+    mock_ocr = create_autospec(OCREngine)  # pyright: ignore[reportAny]
+    mock_parent_dir = MagicMock()
+    mock_folder_path = MagicMock()
+    mock_doc = MagicMock()
+    # we should set mock_doc.__len__ because split_statements iterates over it.
+    # however, it is not necessary because we directly patch process_doc, which is dependent on
+    # mock_doc. We do it anyways.
+    mock_doc.__len__.return_value = len(page_texts)
+    mock_instance = PDFInstance(
+        ocr_engine=mock_ocr,
+        runtime_parent_dir=mock_parent_dir,
+        create_folder_path=mock_folder_path,
+    )
+
+    with patch.object(PDFInstance, "_flush") as mock_flush:
+        mock_ocr.process_doc.return_value = list(enumerate(page_texts))
+
+        mock_instance.split_statements(mock_doc, True)
+
+        mock_ocr.process_doc.assert_called_once_with(mock_doc)
+        assert mock_flush.call_count == flush_count
