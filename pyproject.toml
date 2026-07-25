@@ -20,9 +20,10 @@ dependencies = [
     "tqdm>=4.68.3",
 ]
 
-[tool.pyright.overrides]
-module = "tesserocr"
-reportMissingTypeStubs = false
+[tool.basedpyright]
+allowedUntypedLibraries =["tesserocr"]
+include = ["src"]
+extraPaths=["src","tests"]
 
 [tool.ruff]
 line-length = 88
