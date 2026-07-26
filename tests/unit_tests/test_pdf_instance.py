@@ -4,8 +4,10 @@ This module tests the pdf_instance file to ensure its state management is behavi
 
 from unittest.mock import MagicMock, create_autospec, patch
 import pytest
+from pymupdf import Document, Page
 from file_splitter.pdf_instance import PDFInstance
 from ocr_engine.base import OCREngine
+from tests.unit_tests.factories import TestablePDFInstance, create_page_list
 
 
 def test_pdf_instance_init():
@@ -60,3 +62,22 @@ def test_pdf_instance_split_statements(page_texts, flush_count):
 
         mock_ocr.process_doc.assert_called_once_with(mock_doc)
         assert mock_flush.call_count == flush_count
+
+
+def test_pdf_instance_flush():
+    """
+    This test determines that the output pymupdf.Document is appropriately constructed
+    and saved with the correct file name corresponding to the text in a Document object.
+    """
+
+    doc: Document = Document()
+    page_buffer: list[Page] = create_page_list(
+        ["Shadow Ronin Mifune Pte Ltd", "1", "2"], doc
+    )
+    test_instance: TestablePDFInstance = TestablePDFInstance()
+    test_instance.set_flush_state(page_buffer, "Shadow Ronin Mifune Pte Ltd")
+
+    with patch.object(Document, "save") as mock_save:
+        test_instance.test_flush()
+
+    assert "Shadow Ronin Mifune Pte Ltd" in str(mock_save.call_args)
