@@ -21,10 +21,11 @@ dependencies = [
     "tqdm>=4.68.3",
 ]
 
-[tool.basedpyright]
+[tool.pyright]
 allowedUntypedLibraries =["tesserocr"]
 include = ["src"]
 extraPaths=["src","tests"]
+typeCheckingMode = "basic"
 
 [tool.ruff]
 line-length = 88
