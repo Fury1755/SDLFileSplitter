@@ -23,6 +23,7 @@ dependencies = [
 
 [tool.pyright]
 allowedUntypedLibraries =["tesserocr"]
+reportMissingTypeStubs = false
 include = ["src"]
 extraPaths=["src","tests"]
 typeCheckingMode = "basic"
@@ -33,6 +34,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 fixable = ["ALL"]
+preview = true
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
