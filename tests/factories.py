@@ -3,13 +3,16 @@ Utility module for creating test objects.
 """
 
 from unittest.mock import MagicMock
+
 from pymupdf import Document, Page
+
 from file_splitter.pdf_instance import PDFInstance
 
 
 def create_page_list(text: list[str], doc: Document) -> list[Page]:
     """
-    Creates a list of pymupdf.Page objects with text inside it.
+    Creates a list of pymupdf.Page objects with text inside it. Used for testing internal functions
+    of PDFInstance.
 
     Args:
         text(list[str]): A list of strings. The number of pages correspond to the number of
@@ -30,8 +33,22 @@ def create_page_list(text: list[str], doc: Document) -> list[Page]:
     for i, page_text in enumerate(text):
         doc[i].insert_text((50, 50), page_text)
         page_list.append(doc[i])
-        print(page_list[i].number)
     return page_list
+
+
+def create_test_document(text: list[str]) -> Document:
+    """
+    Returns a pymupdf.Document with one page per string.
+    """
+
+    # virtually same as above but we return doc instead of page_list
+    doc = Document()
+    for page_text in text:
+        doc.new_page()
+
+    for i, page_text in enumerate(text):
+        doc[i].insert_text((50, 50), page_text)
+    return doc
 
 
 class TestablePDFInstance(PDFInstance):  # this is inheritance, not composition
