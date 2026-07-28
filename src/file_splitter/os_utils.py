@@ -3,8 +3,8 @@ Utility module.
 Handles os utilities (right now just creating folders)
 """
 
-from datetime import datetime
 import os
+from datetime import datetime
 
 
 def create_folder(runtime_parent_dir: str) -> str:
@@ -15,7 +15,8 @@ def create_folder(runtime_parent_dir: str) -> str:
         A string which is the path of the created folder with the name
         'SDLsplit_%Y%m%d+%H%M%S'
     """
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    local_time = datetime.now().astimezone()
+    timestamp = datetime.now(local_time.tzinfo).strftime("%Y%m%d_%H%M%S")
     output_folder = os.path.join(runtime_parent_dir, f"SDLsplit_{timestamp}")
 
     # makedirs 'creates' all parent folders in the path
