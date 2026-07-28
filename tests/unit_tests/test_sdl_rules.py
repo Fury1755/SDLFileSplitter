@@ -2,10 +2,11 @@
 Tests text parsing rules.
 """
 
+from dataclasses import fields
+
 import pytest
 
 from file_splitter.text_parser.sdl_rules import rules
-from dataclasses import fields
 
 
 @pytest.mark.parametrize(

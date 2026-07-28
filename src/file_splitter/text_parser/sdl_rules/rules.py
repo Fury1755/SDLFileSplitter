@@ -3,8 +3,8 @@ Contains the rules that the engine will run.
 Rules are independent and stateless.
 """
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)  # we finally have an excuse to enforce immutability
@@ -61,7 +61,4 @@ def is_final_page(text: str) -> bool:
     match = re.search(r"Page (\d+) of (\d+)", text)
     # all our SDL letters don't have double digit pages but we use \d+ here for genericity
 
-    if match:
-        if int(match.group(1)) == int(match.group(2)):
-            return True
-    return False
+    return bool(match) and int(match.group(1)) == int(match.group(2))
