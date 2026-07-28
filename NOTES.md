@@ -18,3 +18,7 @@
 
 ### 26-07-2026
 - Mocking in unit tests carry a trade-off between cascading failures and hardcoded mocked dependency logic. PrincessLana subjectively advised to avoid mocking whenever possible, so that tests fail instead of passing inaccurately.
+
+### 28-07-2024
+- tmp_path is a pytest fixture that creates a temporary directory upon running, no 'from pytest import tmp_path' needed.
+- the asterisk '*' is a non-recursive wildcard that matches anything. '\*\*/*' is a recursive function. '\*\*' matches all subdirectories in a folder, and '/*' specifies a file or folder name (otherwise only directories are returned).
