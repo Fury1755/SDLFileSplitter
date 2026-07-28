@@ -2,14 +2,14 @@
 Contains all the relevant functions for tesseract's OCR pipeline: preprocessing, text extraction and document orchestration.
 """
 
-import numpy as np
 import cv2
-from pymupdf import Document, Page
-from tesserocr import PyTessBaseAPI
+import numpy as np
 from PIL import Image
+from pymupdf import Document, Page
+from tesserocr import PyTessBaseAPI  # pyright: ignore[reportMissingImports]
 
-from src.ocr_engine.preprocessing_utils import deskew_image, page_to_numpy
 from src.ocr_engine.base import OCREngine
+from src.ocr_engine.preprocessing_utils import deskew_image, page_to_numpy
 
 
 # we pass OCREngine as a parameter, meaning that
@@ -23,7 +23,7 @@ class TesseractEngine(OCREngine):
         if self._api is None:
             try:
                 self._api = PyTessBaseAPI(path=self._tess_data_path)
-            except Exception:
+            except Exception:  # noqa
                 raise RuntimeError("API initialization failed")
         return self._api  # so that methods can actually access it
 

@@ -3,7 +3,7 @@ Runs the rules defined in rules.py
 Handles text analysis
 """
 
-import file_splitter.text_parser.sdl_rules.rules as rules
+from file_splitter.text_parser.sdl_rules import rules
 
 
 def get_metadata(text: str) -> rules.Metadata:

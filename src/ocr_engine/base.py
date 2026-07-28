@@ -3,10 +3,10 @@ An abstract base class that contains an interface, allowing us to swap out diffe
 """
 
 from abc import ABC, abstractmethod
-from typing import Tuple, Iterator
+from collections.abc import Iterator
 
-from pymupdf import Page, Document
 import numpy as np
+from pymupdf import Document, Page
 
 
 class OCREngine(ABC):
@@ -19,7 +19,7 @@ class OCREngine(ABC):
         pass
 
     @abstractmethod
-    def process_doc(self, doc: Document) -> Iterator[Tuple[int, str]]:
+    def process_doc(self, doc: Document) -> Iterator[tuple[int, str]]:
         pass
 
     @abstractmethod

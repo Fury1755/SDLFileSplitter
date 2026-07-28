@@ -3,6 +3,7 @@ Fetches runtime constants from .env
 """
 
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()

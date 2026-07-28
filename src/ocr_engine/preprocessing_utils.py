@@ -2,8 +2,8 @@
 Utility module that contains generic helper functions for preprocessing.
 """
 
-import numpy as np
 import cv2
+import numpy as np
 import pymupdf
 from deskew import determine_skew
 

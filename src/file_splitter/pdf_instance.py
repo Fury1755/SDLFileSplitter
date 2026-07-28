@@ -6,13 +6,13 @@ the required state (represented as properties of the class) is reached.
 
 import os
 import re
-from typing import Callable
+from collections.abc import Callable
 
 from pymupdf import Document, Page
 from tqdm import tqdm
 
-from src.ocr_engine.base import OCREngine
 from file_splitter.text_parser import rules_engine
+from src.ocr_engine.base import OCREngine
 
 
 class PDFInstance:

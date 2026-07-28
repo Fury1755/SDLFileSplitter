@@ -3,11 +3,13 @@ This module tests the pdf_instance file to ensure its state management is behavi
 """
 
 from unittest.mock import MagicMock, create_autospec, patch
-import pytest
+
+import pytest  # pyright: ignore[reportMissingImports]
 from pymupdf import Document, Page
+
 from file_splitter.pdf_instance import PDFInstance
 from ocr_engine.base import OCREngine
-from tests.unit_tests.factories import TestablePDFInstance, create_page_list
+from tests.factories import TestablePDFInstance, create_page_list
 
 
 def test_pdf_instance_init():

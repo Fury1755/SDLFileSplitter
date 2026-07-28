@@ -6,12 +6,12 @@ import logging
 
 import pymupdf
 
-from src.ocr_engine.tesseract_engine import TesseractEngine
-from src.file_splitter.pdf_instance import PDFInstance
+from src.config import PDF_PATH, RUNTIME_PARENT_DIR, TESS_DATA_PATH
 from src.file_splitter.os_utils import (
     create_folder,
 )  # temporary monkey patch until new rules are introduced
-from src.config import PDF_PATH, TESS_DATA_PATH, RUNTIME_PARENT_DIR
+from src.file_splitter.pdf_instance import PDFInstance
+from src.ocr_engine.tesseract_engine import TesseractEngine
 
 logging.basicConfig(
     level=logging.INFO,
