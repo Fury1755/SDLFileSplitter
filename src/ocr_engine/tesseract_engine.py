@@ -30,6 +30,7 @@ class TesseractEngine(OCREngine):
     def _close_api(self):
         if self._api is not None:
             self._api.End()
+            self._api = None
 
     def _preprocess(self, img: np.ndarray) -> np.ndarray:
         """
