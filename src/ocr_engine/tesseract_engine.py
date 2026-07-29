@@ -107,7 +107,9 @@ class TesseractEngine(OCREngine):
             )
 
         self._get_api()
-        for i in range(len(doc)):  # pylint: disable=C0200
-            page = doc[i]
-            yield (i, self.process_page(page))
-        self._close_api()
+        try:
+            for i in range(len(doc)):  # pylint: disable=C0200
+                page = doc[i]
+                yield (i, self.process_page(page))
+        finally:  # in case anything goes wrong, prevent tesseract from taking up memory
+            self._close_api()
