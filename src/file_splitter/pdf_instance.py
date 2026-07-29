@@ -79,6 +79,9 @@ class PDFInstance:
                 elif metadata.name != self._current_name:
                     self._flush()
                     self._current_name = metadata.name
+                elif metadata.is_final_page is True:
+                    self._flush()
+                    self._current_name = None
 
             self._page_buffer.append(page)
 
