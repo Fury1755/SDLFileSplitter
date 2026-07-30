@@ -15,6 +15,10 @@ jobs:
         if: runner.os == 'Linux' 
       - run: pip install uv
       - run: uv sync
+      - name: Find Tesseract data path
+        run: |
+          TESSDATA_PATH=$(dpkg -L tesseract-ocr-eng | grep -E 'tessdata$' | head -1)
+          echo "TESSDATA_PATH=$TESSDATA_PATH" >> $GITHUB_ENV
       - name: tests
         env: 
           TESS_DATA_PATH: /usr/share/tesseract-ocr/4.00/tessdata
