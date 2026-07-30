@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 from pymupdf import Document, Page
 
-from file_splitter.pdf_instance import PDFInstance
+from src.file_splitter.pdf_instance import PDFInstance
 
 
 def create_page_list(text: list[str], doc: Document) -> list[Page]:

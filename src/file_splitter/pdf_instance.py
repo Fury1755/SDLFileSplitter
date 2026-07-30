@@ -11,7 +11,7 @@ from collections.abc import Callable
 from pymupdf import Document, Page
 from tqdm import tqdm
 
-from file_splitter.text_parser import rules_engine
+from src.file_splitter.text_parser import rules_engine
 from src.ocr_engine.base import OCREngine
 
 
