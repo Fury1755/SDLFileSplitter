@@ -2,6 +2,11 @@
 Contains all the relevant functions for tesseract's OCR pipeline: preprocessing, text extraction and document orchestration.
 """
 
+import os
+import threading
+from _thread import _local
+from concurrent.futures import Future, ThreadPoolExecutor
+
 import cv2
 import numpy as np
 from PIL import Image
@@ -16,16 +21,18 @@ from src.ocr_engine.preprocessing_utils import deskew_image, page_to_numpy
 #  TesseractEngine inherits its ABC methods
 class TesseractEngine(OCREngine):
     def __init__(self, tess_data_path: str):
-        self._tess_data_path = tess_data_path
-        self._api = None  # lazy initialization for extra control
+        self._tess_data_path: str = tess_data_path
+        self._thread_local: _local = (
+            threading.local()
+        )  # namespace for each individual thread
 
     def _get_api(self):
-        if self._api is None:
+        if not hasattr(self._thread_local, "api"):
             try:
-                self._api = PyTessBaseAPI(path=self._tess_data_path)
+                self._thread_local = PyTessBaseAPI(path=self._tess_data_path)
             except Exception:  # noqa
-                raise RuntimeError("API initialization failed")
-        return self._api  # so that methods can actually access it
+                raise RuntimeError("Failed to initialize PyTessBaseAPI")
+        return self._thread_local.api  # so that methods can actually access it
 
     def _close_api(self):
         if self._api is not None:
@@ -107,9 +114,20 @@ class TesseractEngine(OCREngine):
             )
 
         self._get_api()
-        try:
-            for i in range(len(doc)):  # pylint: disable=C0200
-                page = doc[i]
-                yield (i, self.process_page(page))
-        finally:  # in case anything goes wrong, prevent tesseract from taking up memory
-            self._close_api()
+        workers = 1
+        cpu_count: int | None = os.cpu_count()
+        if cpu_count is not None:
+            workers = cpu_count - 1
+        # we want to implement a sliding window.
+        # we need to track which tasks are still pending, and keep the window full.
+        pending: dict[int, Future[str]] = {}
+        processed: int = 0
+        while processed < len(doc):
+            try:
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    if len(pending) < workers:
+                        pending[processed] = executor.submit(
+                            self.process_page(doc[processed])
+                        )
+            finally:
+                pass
