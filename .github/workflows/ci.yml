@@ -11,14 +11,14 @@ jobs:
           python-version: 3.x
       - run: |
          sudo apt update
-         sudo apt install -y tesseract-ocr libtesseract-dev libleptonica-dev
+         sudo apt install -y tesseract-ocr-eng libtesseract-dev libleptonica-dev
         if: runner.os == 'Linux' 
+      - name: Set TESS_DATA_PATH
+        run: |
+          TESSDATA_PATH=$(find /usr/share/tesseract-ocr -name tessdata -type d | head -1)
+          echo "TESS_DATA_PATH=$TESSDATA_PATH" >> $GITHUB_ENV
       - run: pip install uv
       - run: uv sync
-      - name: Find Tesseract data path
-        run: |
-          TESSDATA_PATH=$(dpkg -L tesseract-ocr-eng | grep -E 'tessdata$' | head -1)
-          echo "TESSDATA_PATH=$TESSDATA_PATH" >> $GITHUB_ENV
       - name: tests
         env: 
           TESS_DATA_PATH: /usr/share/tesseract-ocr/4.00/tessdata
