@@ -15,6 +15,6 @@ jobs:
       - run: uv sync
       - name: tests
         env: 
-          TESS_DATA_PATH: /usr/share/tesseract-ocr/4.00/tessdata
+          TESS_DATA_PATH: C:\Program Files\Tesseract-OCR\tessdata
         run: uv run python -m pytest tests/ -v --cov=src/
-      - run: uv ruff check
+      - run: uv run ruff check
