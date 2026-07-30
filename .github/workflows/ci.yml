@@ -3,20 +3,14 @@ on:
   - push
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: |
-         sudo apt update
-         sudo apt install -y tesseract-ocr-eng libtesseract-dev libleptonica-dev
-        if: runner.os == 'Linux' 
-      - name: Set TESS_DATA_PATH
-        run: |
-          TESSDATA_PATH=$(find /usr/share/tesseract-ocr -name tessdata -type d | head -1)
-          echo "TESS_DATA_PATH=$TESSDATA_PATH" >> $GITHUB_ENV
+      - run: choco install tesseract -y
+      - run: echo "TESS_DATA_PATH=C:\Program Files\Tesseract-OCR\tessdata" >> $env:GITHUB_ENV
       - run: pip install uv
       - run: uv sync
       - name: tests
