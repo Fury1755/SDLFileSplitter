@@ -15,5 +15,8 @@ jobs:
         if: runner.os == 'Linux' 
       - run: pip install uv
       - run: uv sync
-      - run: uv run python -m pytest tests/ -v --cov=src/
+      - name: tests
+        env: 
+          TESS_DATA_PATH: /usr/share/tesseract-ocr/4.00/tessdata
+        run: uv run python -m pytest tests/ -v --cov=src/
       - run: uv ruff check
