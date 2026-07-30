@@ -5,7 +5,7 @@ Contains all the relevant functions for tesseract's OCR pipeline: preprocessing,
 import os
 import threading
 from _thread import _local
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 
 import cv2
 import numpy as np
@@ -29,15 +29,13 @@ class TesseractEngine(OCREngine):
     def _get_api(self):
         if not hasattr(self._thread_local, "api"):
             try:
-                self._thread_local = PyTessBaseAPI(path=self._tess_data_path)
+                # access the api attribute on the threading.local object\
+                # okay I honestly don't know what that means but I think
+                #  we can set the API interface as an attr
+                self._thread_local.api = PyTessBaseAPI(path=self._tess_data_path)  # pyright: ignore[reportAttributeAccessIssue]
             except Exception:  # noqa
                 raise RuntimeError("Failed to initialize PyTessBaseAPI")
         return self._thread_local.api  # so that methods can actually access it
-
-    def _close_api(self):
-        if self._api is not None:
-            self._api.End()
-            self._api = None
 
     def _preprocess(self, img: np.ndarray) -> np.ndarray:
         """
@@ -121,13 +119,34 @@ class TesseractEngine(OCREngine):
         # we want to implement a sliding window.
         # we need to track which tasks are still pending, and keep the window full.
         pending: dict[int, Future[str]] = {}
-        processed: int = 0
-        while processed < len(doc):
-            try:
-                with ThreadPoolExecutor(max_workers=workers) as executor:
-                    if len(pending) < workers:
-                        pending[processed] = executor.submit(
-                            self.process_page(doc[processed])
-                        )
-            finally:
-                pass
+        future_to_page: dict[Future[str], int] = {}
+        page_idx: int = 0
+        next_in_line: int = 0
+        results: dict[int, str] = {}
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            while page_idx < len(doc):
+                # fill the thread pool up with futures
+                while len(pending) < workers and page_idx < len(doc):
+                    pending[page_idx] = executor.submit(
+                        self.process_page, doc[page_idx]
+                    )
+                    future_to_page[pending[page_idx]] = page_idx
+                    page_idx += 1
+
+                while future_to_page:
+                    done, _ = wait(fs=pending.values(), return_when=FIRST_COMPLETED)
+
+                    # get back the results using a reverse dict
+                    for future in done:
+                        future_number: int = future_to_page[future]
+                        results[future_number] = (
+                            future.result()
+                        )  # this is instant because its done
+                        del future_to_page[future]  # it has served its purpose
+                        del pending[future_number]
+
+                    for key in sorted(results.keys()):
+                        if key == next_in_line:
+                            yield (key, results[key])
+                            del results[key]
+                            next_in_line += 1
